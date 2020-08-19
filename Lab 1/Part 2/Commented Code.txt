@@ -1,0 +1,28 @@
+Commented Program w/o title and name:
+0F68:0100 B220          MOV     DL,10			; Set Water Filling Rate
+0F68:0102 8A1E0402      MOV     BL,[0204]		; Get Current Water Level from memory
+0F68:0106 8A0E0502      MOV     CL,[0205]		; Get Irrigation Amount from memory
+0F68:010A 2AD9          SUB     BL,CL 			; Subtract Irrigation Amount from Current Water Level
+0F68:010C 7D04          JGE     0112			; Tank Filled?
+0F68:010E 00DA          ADD     DL,BL 			; Fill Tank using Filling Rate
+0F68:0110 EBFA          JMP     010C 			; Return to Tank Filled? 
+0F68:0112 881E0402      MOV     [0204],BL 		; Store Current Water Level
+0F68:0116 CD20          INT     20 				; End Program
+
+Full Program:
+0F68:0100 BA1002        MOV     DX,0210			; Get Program Title
+0F68:0103 B409          MOV     AH,09			; Load Program Title
+0F68:0105 CD21          INT     21 				; Display Program Title
+0F68:0107 B220          MOV     DL,20  			; Set Water Filling Rate
+0F68:0109 8A1E0402      MOV     BL,[0204] 		; Get Current Water Level from memory
+0F68:010D 8A0E0502      MOV     CL,[0205] 		; Get Irrigation Amount from memory
+0F68:0111 2AD9          SUB     BL,CL 			; Subtract Irrigation Amount from Current Water Level
+0F68:0113 7D08          JGE     011D 			; Tank Filled?
+0F68:0115 FE060602      INC     BYTE PTR [0206] ; Increment number of times tank is filled by 1
+0F68:0119 00DA          ADD     DL,BL 			; Fill Tank using Filling Rate
+0F68:011B EBF6          JMP     0113 			; Return to Tank Filled?
+0F68:011D 881E0402      MOV     [0204],BL 		; Store Current Water Level
+0F68:0121 BA0602        MOV     DX,0206 		; Get Times Tank Filled Count
+0F68:0124 B409          MOV     AH,09 			; Load Times Tank Filled Count
+0F68:0126 CD21          INT     21  			; Display Times Tank Filled Count
+0F68:0128 CD20          INT     20 				; End Program

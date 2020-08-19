@@ -1,0 +1,10 @@
+0F68:0100 BA2001        MOV     DX,0120				; Set Water Filling Rate
+0F68:0103 A10002        MOV     AX,[0200]			; Get Current Water Level from memory
+0F68:0106 8B1E0202      MOV     BX,[0202]			; Get Irrigation Amount from memory
+0F68:010A 29D8          SUB     AX,BX				; Subtract Irrigation Amount from Current Water Level
+0F68:010C 7D06          JGE     0114				; Tank Filled?
+0F68:010E 01D0          ADD     AX,DX				; Fill Tank using Filling Rate
+0F68:0110 7D02          JGE     0114				; Tank Filled?
+0F68:0112 EBFA          JMP     010E				; Return to Fill Tank using Filling Rate
+0F68:0114 A30002        MOV     [0200],AX			; Store Current Water Level
+0F68:0117 CD20          INT     20					; End Program
