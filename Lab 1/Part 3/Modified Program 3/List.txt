@@ -1,0 +1,133 @@
+Microsoft (R) Macro Assembler Version 6.14.8444		    07/14/20 11:58:03
+HELLO1_3.ASM						     Page 1 - 1
+
+
+				;************************
+				;*                      *
+				;* MASM Hello           *
+				;*                      *
+				;************************
+ 0000				cseg segment 'code'
+				assume cs:cseg, ds:cseg, ss:cseg, es:cseg
+
+					org 100h			; organize instructions to start at mem location 100
+
+ 0100  B4 09			start:	mov ah,9			; Prepare for screen display
+ 0102  BA 0200 R			mov dx, offset msg 		; Load 'MASM Hello and name' message to be displayed
+ 0105  CD 21				int 21h				; Display Program title and my name
+ 0107  E8 0031				call getNum			; Get User Input for loop count
+						
+
+
+ 010A  BA 0247 R		again:	mov dx, offset Hello		; Load 'Hello World' message to be displayed
+ 010D  CD 21				int 21h				; Display message to screen
+ 010F  BA 0255 R			mov dx, offset Tens_msg		; Load ''
+ 0112  CD 21				int 21h
+ 0114  BA 0257 R			mov dx, offset Num_msg		; Load Number to be displayed
+ 0117  CD 21				int 21h				; Display Number to screen
+ 0119  FE 06 0257 R			inc byte ptr Num_msg		; Move to next Number to be displayed
+ 011D  8A 1E 0257 R			mov bl, byte ptr Num_msg
+ 0121  80 FB 3A				cmp bl,3Ah			; Check if tens place needs to be updated
+ 0124  74 09				je incTen
+ 0126  E0 E2			back:	loopne again			; If Num of loops isn't zero keep looping
+
+ 0128  E8 0041			done:	call reset 			; Reset Num_msg and Tens_msg to 0
+ 012B  B4 4C				mov ah, 4ch			; End Program
+ 012D  CD 21				int 21h
+
+ 012F  B2 30			incTen: mov dl,30h
+ 0131  88 16 0257 R			mov byte ptr Num_msg,dl 	; Reset one's place to 0
+ 0135  FE 06 0255 R			inc byte ptr Tens_msg 		; Increase ten's place by 1
+ 0139  EB EB				jmp back
+
+ 013B  BA 021F R		getNum:	mov dx, offset prmpt		; Ask user to input how many times the loop runs
+ 013E  CD 21				int 21h				; Display prmpt
+ 0140  B9 0003				mov cx,3			; Set Loop to collect 3 decimal digits
+ 0143  B8 0000				mov ax,0			; Zero AX to prevent arithmetic errors
+ 0146  BB 0000				mov bx,0			; Container to hold decimal digits
+ 0149  B8 000A			top:	mov ax,10
+ 014C  F7 E3				mul bx
+ 014E  8B D8				mov bx,ax
+ 0150  B4 01				mov ah,1			; Function to read a char from keyboard
+ 0152  CD 21				int 21h				; The char saved in AL
+ 0154  2C 30				sub al,30h			; Convert digit from ASCII to decimal
+ 0156  B4 00				mov ah,0
+ 0158  03 D8				add bx,ax 			; Add digit to create decimal number
+ 015A  E2 ED				loop top
+ 015C  8B CB				mov cx,bx
+ 015E  BB 0000				mov bx,0
+ 0161  B8 0000				mov ax,0
+ 0164  B4 09				mov ah,9
+ 0166  BA 0244 R			mov dx, offset nextLine		; Bring cursor to a new line
+ 0169  CD 21				int 21h
+ 016B  C3				ret 				; Return to 'start' procedure
+
+ 016C  BA 0000			reset:  mov dx,0
+ 016F  B2 30				mov dl,30h
+ 0171  88 16 0257 R			mov byte ptr Num_msg,dl		; Reset one's place to 0
+ 0175  88 16 0255 R			mov byte ptr Tens_msg,dl	; Reset ten's place to 0
+ 0179  C3				ret
+
+					org 200h			; Organize instructions to start at mem location 200
+
+ 0200 4D 41 53 4D 20 48		msg 	db "MASM Hello by Anthony Chavez", 0ah,0dh, "$"
+       65 6C 6C 6F 20 62
+       79 20 41 6E 74 68
+       6F 6E 79 20 43 68
+       61 76 65 7A 0A 0D
+       24
+
+ 021F 48 6F 77 20 6D 61		prmpt	db "How many times do you wish to loop", 0ah,0dh, "$"
+       6E 79 20 74 69 6D
+       65 73 20 64 6F 20
+       79 6F 75 20 77 69
+       73 68 20 74 6F 20
+       6C 6F 6F 70 0A 0D
+       24
+
+ 0244 0A 0D 24			nextLine db 0ah,0dh, "$"
+
+ 0247 48 65 6C 6C 6F 20		Hello	db "Hello World", 20h, 20h, "$"
+       57 6F 72 6C 64 20
+       20 24
+
+ 0255 30 24			Tens_msg db 30h, 36
+
+ 0257 30 0D 0A 24		Num_msg db 30h, 13, 10, 36
+
+ 025B				cseg ends
+				end start
+Microsoft (R) Macro Assembler Version 6.14.8444		    07/14/20 11:58:03
+HELLO1_3.ASM						     Symbols 2 - 1
+
+
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+cseg . . . . . . . . . . . . . .	16 Bit	 025B	  Para	  Private 'CODE'	
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+Hello  . . . . . . . . . . . . .	Byte	 0247	  cseg	
+Num_msg  . . . . . . . . . . . .	Byte	 0257	  cseg	
+Tens_msg . . . . . . . . . . . .	Byte	 0255	  cseg	
+again  . . . . . . . . . . . . .	L Near	 010A	  cseg	
+back . . . . . . . . . . . . . .	L Near	 0126	  cseg	
+done . . . . . . . . . . . . . .	L Near	 0128	  cseg	
+getNum . . . . . . . . . . . . .	L Near	 013B	  cseg	
+incTen . . . . . . . . . . . . .	L Near	 012F	  cseg	
+msg  . . . . . . . . . . . . . .	Byte	 0200	  cseg	
+nextLine . . . . . . . . . . . .	Byte	 0244	  cseg	
+prmpt  . . . . . . . . . . . . .	Byte	 021F	  cseg	
+reset  . . . . . . . . . . . . .	L Near	 016C	  cseg	
+start  . . . . . . . . . . . . .	L Near	 0100	  cseg	
+top  . . . . . . . . . . . . . .	L Near	 0149	  cseg	
+
+	   0 Warnings
+	   0 Errors

@@ -1,0 +1,82 @@
+;************************
+;*                      *
+;* MASM Hello           *
+;*                      *
+;************************
+cseg segment 'code'
+assume cs:cseg, ds:cseg, ss:cseg, es:cseg
+
+		org 100h					; organize instructions to start at mem location 100
+
+start:	mov ah,9					; Prepare for screen display
+		mov dx, offset msg 			; Load 'MASM Hello and name' message to be displayed
+		int 21h						; Display Program title and my name
+		call getNum					; Get User Input for loop count
+		
+
+
+again:	mov dx, offset Hello		; Load 'Hello World' message to be displayed
+		int 21h						; Display message to screen
+		mov dx, offset Tens_msg		; Load ten's place
+		int 21h 					; Display ten's place
+		mov dx, offset Num_msg		; Load Number to be displayed
+		int 21h						; Display Number to screen
+		inc byte ptr Num_msg		; Move to next Number to be displayed
+		mov bl, byte ptr Num_msg 
+		cmp bl,3Ah					; Check if tens place needs to be updated
+		je incTen
+back:	loopne again				; If Num of loops isn't zero keep looping
+
+done:	call reset 					; Reset Num_msg and Tens_msg to 0
+		mov ah, 4ch					; End Program
+		int 21h
+
+incTen: mov dl,30h
+		mov byte ptr Num_msg,dl 	; Reset one's place to 0
+		inc byte ptr Tens_msg 		; Increase ten's place by 1
+		jmp back
+
+getNum:	mov dx, offset prmpt		; Ask user to input how many times the loop runs
+		int 21h						; Display prmpt
+		mov cx,3					; Set Loop to collect 3 decimal digits
+		mov ax,0					; Zero AX to prevent arithmetic errors
+		mov bx,0					; Container to hold decimal digits
+top:	mov ax,10
+		mul bx
+		mov bx,ax 
+		mov ah,1					; Function to read a char from keyboard
+		int 21h						; The char saved in AL
+		sub al,30h					; Convert digit from ASCII to decimal
+		mov ah,0
+		add bx,ax 					; Add digit to create decimal number
+		loop top
+		mov cx,bx 					; Load number of loops
+		mov bx,0 					; Zero Container to hold decimal digits
+		mov ax,0 					; Zero AX
+		mov ah,9
+		mov dx, offset nextLine		; Bring cursor to a new line
+		int 21h	
+		ret 						; Return to 'start' procedure
+
+reset:  mov dx,0
+		mov dl,30h
+		mov byte ptr Num_msg,dl 	; Reset one's place to 0
+		mov byte ptr Tens_msg,dl 	; Reset ten's place to 0
+		ret 						; Return to 'done' procedure
+
+		org 200h					; Organize instructions to start at mem location 200
+
+msg 	db "MASM Hello by Anthony Chavez", 0ah,0dh, "$"
+
+prmpt	db "How many times do you wish to loop", 0ah,0dh, "$"
+
+nextLine db 0ah,0dh, "$"
+
+Hello	db "Hello World", 20h, 20h, "$"
+
+Tens_msg db 30h, 36
+
+Num_msg db 30h, 13, 10, 36
+
+cseg ends
+end start

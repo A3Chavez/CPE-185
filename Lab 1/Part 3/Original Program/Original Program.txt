@@ -1,0 +1,31 @@
+;************************
+;*                      *
+;* MASM Hello           *
+;*                      *
+;************************
+cseg segment 'code'
+assume cs:cseg, ds:cseg, ss:cseg, es:cseg
+
+	org 100h						; organize instructions to start at mem location 100
+
+start:	mov cx,10					; Number of loops
+		mov ah,9					; Prepare for screen display
+
+again:	mov dx, offset Hello		; Load 'Hello World' message to be displayed
+		int 21h						; Display message to screen
+		mov dx, offset Num_msg		; Load Number to be displayed
+		int 21h						; Display Number to screen
+		inc byte ptr Num_msg		; Move to next Number to be displayed
+		loopne again				; If Num of loops isn't zero keep looping
+
+done:	mov ah, 4ch					; End Program
+		int 21h
+
+	org 200h						; organize instructions to start at mem location 200
+
+Hello	db "Hello World", 20h, 20h, "$"
+
+Num_msg db 30h, 13, 10, 36
+
+cseg ends
+end start

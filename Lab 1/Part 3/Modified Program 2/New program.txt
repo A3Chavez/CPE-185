@@ -1,0 +1,43 @@
+;************************
+;*                      *
+;* MASM Hello           *
+;*                      *
+;************************
+cseg segment 'code'
+assume cs:cseg, ds:cseg, ss:cseg, es:cseg
+
+		org 100h					; organize instructions to start at mem location 100
+
+start:	mov cx,10					; Number of loops
+		mov bx,cx					; Store number of loops for resetting procedure
+		mov ah,9					; Prepare for screen display
+		mov dx, offset msg 			; Load 'MASM Hello and name' message to be displayed
+		int 21h						; Display Program title and my name
+
+again:	mov dx, offset Hello		; Load 'Hello World' message to be displayed
+		int 21h						; Display message to screen
+		mov dx, offset Num_msg		; Load Number to be displayed
+		int 21h						; Display Number to screen
+		inc byte ptr Num_msg		; Move to next Number to be displayed
+		loopne again				; If Num of loops isn't zero keep looping
+
+done:	call reset					; Reset the Num_msg to 30h
+		mov ah, 4ch					; End Program
+		int 21h
+
+reset:	dec byte ptr Num_msg		; Decrement Num_msg by 1 byte
+		dec bx						; Decrement saved number of loops by 1
+		cmp bx,0					; Check if saved number of loops is 0
+		jne reset					; If saved number of loops isn’t zero keep looping
+		ret							; Return back to ‘done’ procedure
+
+		org 200h					; organize instructions to start at mem location 200
+
+msg 	db "MASM Hello by Anthony Chavez", 0ah,0dh, "$"
+
+Hello	db "Hello World", 20h, 20h, "$"
+
+Num_msg db 30h, 13, 10, 36
+
+cseg ends
+end start
