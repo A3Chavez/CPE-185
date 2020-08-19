@@ -1,0 +1,386 @@
+-?
+assemble     A [address]
+compare      C range address
+dump         D [range]
+enter        E address [list]
+fill         F range list
+go           G [=address] [addresses]
+hex          H value1 value2
+input        I port
+load         L [address] [drive] [firstsector] [number]
+move         M range address
+name         N [pathname] [arglist]
+output       O port byte
+proceed      P [=address] [number]
+quit         Q
+register     R [register]
+search       S range list
+trace        T [=address] [value]
+unassemble   U [range]
+write        W [address] [drive] [firstsector] [number]
+allocate expanded memory        XA [#pages]
+deallocate expanded memory      XD [handle]
+map expanded memory pages       XM [Lpage] [Ppage] [handle]
+display expanded memory status  XS
+
+NOTE: to capture content in cmd, click on "mark", highlight text and press enter, paste to any document
+
+type "debug" to enter DEBUG mode in the MS-DOS Prompt, this will be indicated by a "-"
+typing a "?" will list DEBUG commands; help
+
+typing "dump" ("d") will display the contents of the memory locations
+a) d 0100
+Result:
+-d 0100
+0F68:0100  DE E8 45 FA AC AA 3C 0D-75 FA 56 8B 36 92 DE 89   ..E...<.u.V.6...
+0F68:0110  4C FE 5E 8E 06 08 D3 26-80 3E 43 04 34 00 57 0F   L.^....&.>C.4.W.
+0F68:0120  BA 42 86 E9 65 FE BF 81-00 8B 36 92 DE 8B 44 FE   .B..e.....6...D.
+0F68:0130  BE C6 DB 8B 74 09 03 C6-50 E8 0D FA 58 E8 5A 00   ....t...P...X.Z.
+0F68:0140  03 F1 2B C6 8B C8 E8 7B-F4 83 F9 7F 72 0B B9 7E   ..+....{....r..~
+0F68:0150  00 F3 A4 B0 0D AA 47 EB-08 AC AA 3C 0D 74 02 EB   ......G....<.t..
+0F68:0160  F8 8B CF 81 E9 82 00 26-88 0E 80 00 C3 8B 1E 92   .......&........
+0F68:0170  DE BE 1A D4 BA FF FF B8-00 AE CD 2F 3C 00 C3 A0   .........../<...
+
+8 rows of data, default without a length specified
+3 data blocks
+left side are addresses in memory in 4 bit hexadecimal, descending order
+15 columns in middle section, data?; 2 bit hexadecimal
+right side is filled with unreadable text
+
+b) d 0100 0110
+Result:
+-d 0100 0110
+0F68:0100  DE E8 45 FA AC AA 3C 0D-75 FA 56 8B 36 92 DE 89   ..E...<.u.V.6...
+0F68:0110  4C                                                L
+
+2 rows of data
+
+c) d 0100 0200
+Result:
+-d 0100 0200
+0F68:0100  DE E8 45 FA AC AA 3C 0D-75 FA 56 8B 36 92 DE 89   ..E...<.u.V.6...
+0F68:0110  4C FE 5E 8E 06 08 D3 26-80 3E 43 04 34 00 57 0F   L.^....&.>C.4.W.
+0F68:0120  BA 42 86 E9 65 FE BF 81-00 8B 36 92 DE 8B 44 FE   .B..e.....6...D.
+0F68:0130  BE C6 DB 8B 74 09 03 C6-50 E8 0D FA 58 E8 5A 00   ....t...P...X.Z.
+0F68:0140  03 F1 2B C6 8B C8 E8 7B-F4 83 F9 7F 72 0B B9 7E   ..+....{....r..~
+0F68:0150  00 F3 A4 B0 0D AA 47 EB-08 AC AA 3C 0D 74 02 EB   ......G....<.t..
+0F68:0160  F8 8B CF 81 E9 82 00 26-88 0E 80 00 C3 8B 1E 92   .......&........
+0F68:0170  DE BE 1A D4 BA FF FF B8-00 AE CD 2F 3C 00 C3 A0   .........../<...
+0F68:0180  DB E2 0A C0 74 09 56 57-E8 2A 21 5F 5E 73 0A B9   ....t.VW.*!_^s..
+0F68:0190  04 01 FC 56 57 F3 A4 5F-5E C3 50 56 33 C9 33 DB   ...VW.._^.PV3.3.
+0F68:01A0  AC E8 5F 23 74 19 3C 0D-74 15 F6 C7 20 75 06 3A   .._#t.<.t... u.:
+0F68:01B0  06 0C D3 74 0A 41 3C 22-75 E6 80 F7 20 EB E1 5E   ...t.A<"u... ..^
+0F68:01C0  58 C3 A1 E1 D7 8B 36 E3-D7 C6 06 25 D9 00 C6 06   X.....6....%....
+0F68:01D0  21 D9 00 8B 36 E3 D7 8B-0E E1 D7 8B D6 E3 42 51   !...6.........BQ
+0F68:01E0  56 5B 2B DE 59 03 CB 8B-D6 C6 06 C5 DB 00 E3 31   V[+.Y..........1
+0F68:01F0  49 AC E8 D9 F6 74 08 49-46 FE 06 C5 DB EB EF E8   I....t.IF.......
+0F68:0200  DB                                                .
+
+17 rows of data
+
+source:https://montcs.bloomu.edu/Information/LowLevel/DOS-Debug.html
+
+Syntax: d [starting address] [length]
+		d [range]
+
+Address specified in hexadecimal
+
+Features on the toolbar of terminal:
+Drop down menu to adjust window size
+"Mark" function used to highlight text to copy to the clipboard
+"Copy" function used after using the mark function to copy highlighted text to clipboard
+"Paste" function pastes contents on the clipboard to the terminal
+"Full Screen" function will expand the terminal to take up the whole screen, all mouse functions are disabled. To escape full screen mode, press Alt+Enter to toggle off full screen mode
+"Properties" function allows the user to change the properties of the terminal such as the text font, window's title, and keyboard shortcuts
+"Font" function will bring you to the Font section of the properties function where you can change the terminal's text font
+
+
+DEBUG "enter" command ("e") to enter the assembly language program
+Changed the addresses contents to match the example in lab instructions and compared result
+
+e command:
+-e100
+0F68:0100  DE.BA   E8.20   45.01   FA.A1   AC.00   AA.02   3C.8B   0D.1E
+-E108
+0F68:0108  75.02   FA.02   56.29   8B.D8   36.7D   92.06   DE.01   89.D0
+-e0110
+0F68:0110  4C.7D   FE.02   5E.EB   8E.FA   06.A3   08.00   D3.02   26.CD
+-e0118
+0F68:0118  80.20
+
+u command
+-u100 118
+0F68:0100 BA2001        MOV     DX,0120
+0F68:0103 A10002        MOV     AX,[0200]
+0F68:0106 8B1E0202      MOV     BX,[0202]
+0F68:010A 29D8          SUB     AX,BX
+0F68:010C 7D06          JGE     0114
+0F68:010E 01D0          ADD     AX,DX
+0F68:0110 7D02          JGE     0114
+0F68:0112 EBFA          JMP     010E
+0F68:0114 A30002        MOV     [0200],AX
+0F68:0117 CD20          INT     20
+
+r command
+-r
+AX=0000  BX=0000  CX=0000  DX=0000  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=0100   NV UP EI PL NZ NA PO NC
+0F68:0100 BA2001        MOV     DX,0120
+
+using the "trace" command
+
+1st run matching the lab instructions:
+-e200
+0F68:0200  DB.20   F9.01   75.50   04.02
+-d200 203
+0F68:0200  20 01 50 02                                        .P.
+-t
+
+AX=0000  BX=0000  CX=0000  DX=0120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=0103   NV UP EI PL NZ NA PO NC
+0F68:0103 A10002        MOV     AX,[0200]                          DS:0200=0120
+-t
+
+AX=0120  BX=0000  CX=0000  DX=0120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=0106   NV UP EI PL NZ NA PO NC
+0F68:0106 8B1E0202      MOV     BX,[0202]                          DS:0202=0250
+-t
+
+AX=0120  BX=0250  CX=0000  DX=0120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=010A   NV UP EI PL NZ NA PO NC
+0F68:010A 29D8          SUB     AX,BX
+-t
+
+AX=FED0  BX=0250  CX=0000  DX=0120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=010C   NV UP EI NG NZ NA PO CY
+0F68:010C 7D06          JGE     0114
+-t
+
+AX=FED0  BX=0250  CX=0000  DX=0120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=010E   NV UP EI NG NZ NA PO CY
+0F68:010E 01D0          ADD     AX,DX
+-t
+
+AX=FFF0  BX=0250  CX=0000  DX=0120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=0110   NV UP EI NG NZ NA PE NC
+0F68:0110 7D02          JGE     0114
+-t
+
+AX=FFF0  BX=0250  CX=0000  DX=0120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=0112   NV UP EI NG NZ NA PE NC
+0F68:0112 EBFA          JMP     010E
+-t
+
+AX=FFF0  BX=0250  CX=0000  DX=0120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=010E   NV UP EI NG NZ NA PE NC
+0F68:010E 01D0          ADD     AX,DX
+-t
+
+AX=0110  BX=0250  CX=0000  DX=0120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=0110   NV UP EI PL NZ NA PO CY
+0F68:0110 7D02          JGE     0114
+-t
+
+AX=0110  BX=0250  CX=0000  DX=0120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=0114   NV UP EI PL NZ NA PO CY
+0F68:0114 A30002        MOV     [0200],AX                          DS:0200=0120
+-t
+
+AX=0110  BX=0250  CX=0000  DX=0120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=0117   NV UP EI PL NZ NA PO CY
+0F68:0117 CD20          INT     20
+-p
+
+Program terminated normally
+
+
+2nd run, my input
+
+-E100
+0F68:0100  DE.BA   E8.20   45.01   FA.A1   AC.00   AA.02   3C.8B   0D.1E
+0F68:0108  75.02   FA.02   56.29   8B.D8   36.7D   92.06   DE.01   89.D0
+0F68:0110  4C.7D   FE.02   5E.EB   8E.FA   06.A3   08.00   D3.02   26.CD
+0F68:0118  80.20
+-U
+0F68:0100 BA2001        MOV     DX,0120
+0F68:0103 A10002        MOV     AX,[0200]
+0F68:0106 8B1E0202      MOV     BX,[0202]
+0F68:010A 29D8          SUB     AX,BX
+0F68:010C 7D06          JGE     0114
+0F68:010E 01D0          ADD     AX,DX
+0F68:0110 7D02          JGE     0114
+0F68:0112 EBFA          JMP     010E
+0F68:0114 A30002        MOV     [0200],AX
+0F68:0117 CD20          INT     20
+0F68:0119 3E            DS:
+0F68:011A 43            INC     BX
+0F68:011B 0434          ADD     AL,34
+0F68:011D 00570F        ADD     [BX+0F],DL
+-R
+AX=0000  BX=0000  CX=0000  DX=0000  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=0100   NV UP EI PL NZ NA PO NC
+0F68:0100 BA2001        MOV     DX,0120
+-E200
+0F68:0200  DB.02   F9.02   75.20   04.01
+-D200 203
+0F68:0200  02 02 20 01                                       .. .
+-T
+
+AX=0000  BX=0000  CX=0000  DX=0120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=0103   NV UP EI PL NZ NA PO NC
+0F68:0103 A10002        MOV     AX,[0200]                          DS:0200=0202
+-T
+
+AX=0202  BX=0000  CX=0000  DX=0120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=0106   NV UP EI PL NZ NA PO NC
+0F68:0106 8B1E0202      MOV     BX,[0202]                          DS:0202=0120
+-T
+
+AX=0202  BX=0120  CX=0000  DX=0120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=010A   NV UP EI PL NZ NA PO NC
+0F68:010A 29D8          SUB     AX,BX
+-T
+
+AX=00E2  BX=0120  CX=0000  DX=0120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=010C   NV UP EI PL NZ NA PE NC
+0F68:010C 7D06          JGE     0114
+-T
+
+AX=00E2  BX=0120  CX=0000  DX=0120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=0114   NV UP EI PL NZ NA PE NC
+0F68:0114 A30002        MOV     [0200],AX                          DS:0200=0202
+-T
+
+AX=00E2  BX=0120  CX=0000  DX=0120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=0117   NV UP EI PL NZ NA PE NC
+0F68:0117 CD20          INT     20
+-P
+
+Program terminated normally
+
+3RD RUN
+
+-E100
+0F68:0100  DE.BA   E8.20   45.A1   FA.A1   AC.00   AA.02   3C.8B   0D.1E
+0F68:0108  75.02   FA.02   56.29   8B.D8   36.7D   92.06   DE.01   89.D0
+0F68:0110  4C.7D   FE.02   5E.EB   8E.FA   06.A3   08.00   D3.02   26.CD
+0F68:0118  80.20
+-U100 118
+0F68:0100 BA20A1        MOV     DX,A120
+0F68:0103 A10002        MOV     AX,[0200]
+0F68:0106 8B1E0202      MOV     BX,[0202]
+0F68:010A 29D8          SUB     AX,BX
+0F68:010C 7D06          JGE     0114
+0F68:010E 01D0          ADD     AX,DX
+0F68:0110 7D02          JGE     0114
+0F68:0112 EBFA          JMP     010E
+0F68:0114 A30002        MOV     [0200],AX
+0F68:0117 CD20          INT     20
+-R
+AX=0000  BX=0000  CX=0000  DX=0000  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=0100   NV UP EI PL NZ NA PO NC
+0F68:0100 BA20A1        MOV     DX,A120
+-E200
+0F68:0200  DB.01   F9.20   75.20   04.50
+-D200 203
+0F68:0200  01 20 20 50                                       .  P
+-T
+
+AX=0000  BX=0000  CX=0000  DX=A120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=0103   NV UP EI PL NZ NA PO NC
+0F68:0103 A10002        MOV     AX,[0200]                          DS:0200=2001
+-T
+
+AX=2001  BX=0000  CX=0000  DX=A120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=0106   NV UP EI PL NZ NA PO NC
+0F68:0106 8B1E0202      MOV     BX,[0202]                          DS:0202=5020
+-T
+
+AX=2001  BX=5020  CX=0000  DX=A120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=010A   NV UP EI PL NZ NA PO NC
+0F68:010A 29D8          SUB     AX,BX
+-T
+
+AX=CFE1  BX=5020  CX=0000  DX=A120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=010C   NV UP EI NG NZ NA PE CY
+0F68:010C 7D06          JGE     0114
+-T
+
+AX=CFE1  BX=5020  CX=0000  DX=A120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=010E   NV UP EI NG NZ NA PE CY
+0F68:010E 01D0          ADD     AX,DX
+-T
+
+AX=7101  BX=5020  CX=0000  DX=A120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=0110   OV UP EI PL NZ NA PO CY
+0F68:0110 7D02          JGE     0114
+-T
+
+AX=7101  BX=5020  CX=0000  DX=A120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=0112   OV UP EI PL NZ NA PO CY
+0F68:0112 EBFA          JMP     010E
+-T
+
+AX=7101  BX=5020  CX=0000  DX=A120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=010E   OV UP EI PL NZ NA PO CY
+0F68:010E 01D0          ADD     AX,DX
+-T
+
+AX=1221  BX=5020  CX=0000  DX=A120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=0110   NV UP EI PL NZ NA PE CY
+0F68:0110 7D02          JGE     0114
+-T
+
+AX=1221  BX=5020  CX=0000  DX=A120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=0114   NV UP EI PL NZ NA PE CY
+0F68:0114 A30002        MOV     [0200],AX                          DS:0200=2001
+-T
+
+AX=1221  BX=5020  CX=0000  DX=A120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=0117   NV UP EI PL NZ NA PE CY
+0F68:0117 CD20          INT     20
+-P
+
+Program terminated normally
+
+
+Go command
+-E100
+0F68:0100  DE.BA   E8.20   45.01   FA.A1   AC.00   AA.02   3C.8B   0D.1E
+0F68:0108  75.02   FA.02   56.29   8B.D8   36.7D   92.06   DE.01   89.D0
+0F68:0110  4C.7D   FE.02   5E.EB   8E.FA   06.A3   08.00   D3.02   26.CD
+0F68:0118  80.20
+-E200
+0F68:0200  DB.20   F9.01   75.50   04.02
+-U100 118
+0F68:0100 BA2001        MOV     DX,0120
+0F68:0103 A10002        MOV     AX,[0200]
+0F68:0106 8B1E0202      MOV     BX,[0202]
+0F68:010A 29D8          SUB     AX,BX
+0F68:010C 7D06          JGE     0114
+0F68:010E 01D0          ADD     AX,DX
+0F68:0110 7D02          JGE     0114
+0F68:0112 EBFA          JMP     010E
+0F68:0114 A30002        MOV     [0200],AX
+0F68:0117 CD20          INT     20
+-R
+AX=0000  BX=0000  CX=0000  DX=0000  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=0100   NV UP EI PL NZ NA PO NC
+0F68:0100 BA2001        MOV     DX,0120
+-G=100 10E
+
+AX=FED0  BX=0250  CX=0000  DX=0120  SP=FFEE  BP=0000  SI=0000  DI=0000
+DS=0F68  ES=0F68  SS=0F68  CS=0F68  IP=010E   NV UP EI NG NZ NA PO CY
+0F68:010E 01D0          ADD     AX,DX
+
+commented code:
+0F68:0100 BA2001        MOV     DX,0120				; Set Water Filling Rate
+0F68:0103 A10002        MOV     AX,[0200]			; Get Current Water Level from memory
+0F68:0106 8B1E0202      MOV     BX,[0202]			; Get Irrigation Amount from memory
+0F68:010A 29D8          SUB     AX,BX				; Subtract Irrigation Amount from Current Water Level
+0F68:010C 7D06          JGE     0114				; Tank Filled?
+0F68:010E 01D0          ADD     AX,DX				; Fill Tank using Filling Rate
+0F68:0110 7D02          JGE     0114				; Tank Filled?
+0F68:0112 EBFA          JMP     010E				; Return to Fill Tank using Filling Rate
+0F68:0114 A30002        MOV     [0200],AX			; Store Current Water Level
+0F68:0117 CD20          INT     20					; End Program
